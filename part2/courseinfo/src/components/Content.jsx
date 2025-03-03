@@ -5,7 +5,7 @@ const Content = ({ parts }) => {
   const totalExercises = parts.reduce((sum, part) => sum + part.exercises, 0);
 
   return (
-    <main>
+    <>
       {parts.map((part) => (
         <Part
           key={part.id}
@@ -14,7 +14,7 @@ const Content = ({ parts }) => {
         />
       ))}
       <Total total={totalExercises} />
-    </main>
+    </>
   );
 };
 
