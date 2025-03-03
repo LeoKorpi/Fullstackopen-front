@@ -1,4 +1,13 @@
 const Statistics = ({ good, neutral, bad, total, average, positivePercetange }) => {
+  if (total == 0) {
+    return (
+      <section>
+        <h2>Statistics</h2>
+        <p>No feedback given</p>
+      </section>
+    );
+  }
+
   return (
     <section>
       <h2>Statistics</h2>
