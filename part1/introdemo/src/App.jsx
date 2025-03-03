@@ -22,11 +22,11 @@ const App = () => {
   };
 
   return (
-    <div>
+    <main>
       <Header course={course.name} />
       <Content parts={course.parts} />
       <Total parts={course.parts} />
-    </div>
+    </main>
   );
 };
 export default App;
