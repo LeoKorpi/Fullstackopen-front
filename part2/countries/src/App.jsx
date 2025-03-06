@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Filter from "./components/Filter";
+import Results from "./components/Results";
 
 function App() {
   const [filter, setFilter] = useState("");
@@ -48,42 +49,8 @@ function App() {
     setFilter(event.target.value);
   };
 
-  const renderResults = () => {
-    if (filteredCountries.length > 10) {
-      return <p>Too many matches, specify another filter.</p>;
-    }
-
-    if (filteredCountries.length > 1 && filteredCountries.length <= 10) {
-      return (
-        <ul>
-          {filteredCountries.map((country) => (
-            <li key={country.name.common}>{country.name.common}</li>
-          ))}
-        </ul>
-      );
-    }
-
-    if (selectedCountry) {
-      return (
-        <section>
-          <h1>{selectedCountry.name.common}</h1>
-          <h2>Area: {selectedCountry.area}</h2>
-          <h2>Population: {selectedCountry.population}</h2>
-          <h2>Languages:</h2>
-          <ul>
-            {Object.values(selectedCountry.languages).map((lang) => (
-              <li key={lang}>{lang}</li>
-            ))}
-          </ul>
-          <img
-            src={selectedCountry.flags.png}
-            alt={selectedCountry.flags.alt}
-            width="200"
-          />
-        </section>
-      );
-    }
-    return <p>No results, sorry.</p>;
+  const handleSelectedCountry = (countryName) => {
+    setFilter(countryName);
   };
 
   return (
@@ -92,7 +59,11 @@ function App() {
         filter={filter}
         handleFilterChange={handleFilterChange}
       />
-      {renderResults()}
+      <Results
+        filteredCountries={filteredCountries}
+        selectedCountry={selectedCountry}
+        handleSelectedCountry={handleSelectedCountry}
+      />
     </main>
   );
 }
