@@ -10,7 +10,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
-  const [notification, setNotification] = useState(null);
+  const [notification, setNotification] = useState({ message: null, type: "" });
 
   useEffect(() => {
     personService.getAll().then((initialPersons) => {
@@ -38,15 +38,15 @@ const App = () => {
               setPersons(
                 persons.map((person) => (person.id !== personExists.id ? person : returnedPerson))
               );
-              setNotification(`Changed ${updatedPerson.name}'s number`);
-              setTimeout(() => {
-                setNotification(null);
-              }, 5000);
+              showNotification(`Changed ${updatedPerson.name}'s number`);
               setNewName("");
               setNewNumber("");
             })
             .catch((error) => {
-              alert(`Error: ${newName} was already removed from the server\n`, error);
+              showNotification(
+                `Error: Information of ${updatedPerson.name} has already been removed from server`,
+                "error"
+              );
               setPersons(persons.filter((person) => person.id !== personExists.id));
             });
         }
@@ -64,12 +64,9 @@ const App = () => {
 
     personService.create(personObject).then((returnedPerson) => {
       setPersons(persons.concat(returnedPerson));
-      setNotification(`Added ${personObject.name}`);
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
       setNewName("");
       setNewNumber("");
+      showNotification(`${returnedPerson.name} was added successfully!`);
     });
   };
 
@@ -97,10 +94,20 @@ const App = () => {
     person.name.toLowerCase().includes(filter.toLowerCase())
   );
 
+  const showNotification = (message, type = "success") => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification({ message: null, type: "" });
+    }, 5000);
+  };
+
   return (
     <>
       <h2>Phonebook</h2>
-      <Notification message={notification} />
+      <Notification
+        message={notification.message}
+        type={notification.type}
+      />
       <Filter
         filter={filter}
         handleFilterChange={handleFilterChange}
