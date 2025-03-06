@@ -1,9 +1,8 @@
-const Person = ({ person }) => (
+const Person = ({ person, remove }) => (
   <p>
-    {person.name} {person.number}
+    {person.name} {person.number}{" "}
+    <button onClick={() => remove(person.id, person.name)}>Delete</button>
   </p>
 );
 
 export default Person;
-
-// visa en person, duh

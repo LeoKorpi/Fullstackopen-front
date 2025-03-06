@@ -28,7 +28,7 @@ const App = () => {
     const personObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1,
+      id: (persons.length + 1).toString(),
     };
 
     personService.create(personObject).then((returnedPerson) => {
@@ -36,6 +36,14 @@ const App = () => {
       setNewName("");
       setNewNumber("");
     });
+  };
+
+  const removePerson = (id, name) => {
+    if (window.confirm(`Delete ${name}?`)) {
+      personService.remove(id).then(() => {
+        setPersons(persons.filter((person) => person.id !== id));
+      });
+    }
   };
 
   const handlePersonNameChange = (event) => {
@@ -70,7 +78,10 @@ const App = () => {
         handlePersonNumberChange={handlePersonNumberChange}
       />
       <h2>Contacts</h2>
-      <Persons personsToShow={personsToShow} />
+      <Persons
+        personsToShow={personsToShow}
+        remove={removePerson}
+      />
     </>
   );
 };
