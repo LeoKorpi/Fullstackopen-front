@@ -62,12 +62,17 @@ const App = () => {
       id: (persons.length + 1).toString(),
     };
 
-    personService.create(personObject).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson));
-      setNewName("");
-      setNewNumber("");
-      showNotification(`${returnedPerson.name} was added successfully!`);
-    });
+    personService
+      .create(personObject)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName("");
+        setNewNumber("");
+        showNotification(`${returnedPerson.name} was added successfully!`);
+      })
+      .catch((error) => {
+        console.log(error.response.data.error);
+      });
   };
 
   const removePerson = (id, name) => {
