@@ -71,6 +71,7 @@ const App = () => {
         showNotification(`${returnedPerson.name} was added successfully!`);
       })
       .catch((error) => {
+        showNotification(`${error.response.data.error}`, "error");
         console.log(error.response.data.error);
       });
   };
