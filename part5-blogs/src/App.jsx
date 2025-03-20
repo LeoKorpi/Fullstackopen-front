@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Blog from "./components/Blog";
 import BlogForm from "./components/BlogForm";
 import LoginForm from "./components/LoginForm";
+import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -9,7 +10,7 @@ const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [notification, setNotification] = useState({ message: null, type: "" });
   const [user, setUser] = useState(null);
   const [blogTitle, setBlogTitle] = useState("");
   const [blogAuthor, setBlogAuthor] = useState("");
@@ -39,17 +40,16 @@ const App = () => {
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
       blogService.setToken(user.token);
       setUser(user);
+      showNotification("Successfully logged in!");
       setUsername("");
       setPassword("");
     } catch (exception) {
-      setErrorMessage("Wrong credentials");
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
+      showNotification("Wrong credentials", "error");
     }
   };
 
   const handleLogout = () => {
+    window.localStorage.removeItem("loggedBlogappUser");
     blogService.setToken(null);
     setUser(null);
   };
@@ -61,24 +61,33 @@ const App = () => {
         author: blogAuthor,
         url: blogUrl,
       };
+      showNotification(`The blog '${blog.title}' by ${blog.author} has been added!`);
       blogService.create(blog);
       setBlogTitle("");
       setBlogAuthor("");
       setBlogUrl("");
     } catch (exception) {
-      setErrorMessage("Something went wrong with adding a new blog");
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
+      showNotification("Something went wrong with adding a new blog", "error");
     }
+  };
+
+  const showNotification = (message, type = "success") => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification({ message: null, type: "" });
+    }, 5000);
   };
 
   return (
     <div>
       <h1>Blogs</h1>
+      <Notification
+        message={notification.message}
+        type={notification.type}
+      />
       {user === null ? (
         <LoginForm
-          errorMessage={errorMessage}
+          notification={notification}
           handleLogin={handleLogin}
           username={username}
           setUsername={setUsername}
@@ -95,6 +104,7 @@ const App = () => {
 
       {user !== null && (
         <BlogForm
+          notification={notification}
           handleNewBlog={handleNewBlog}
           blogTitle={blogTitle}
           setBlogTitle={setBlogTitle}

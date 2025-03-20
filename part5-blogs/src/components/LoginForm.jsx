@@ -1,10 +1,7 @@
-import Notification from "./Notification";
-
-const LoginForm = ({ errorMessage, handleLogin, username, setUsername, password, setPassword }) => {
+const LoginForm = ({ notification, handleLogin, username, setUsername, password, setPassword }) => {
   return (
     <>
       <h2>Log in to application</h2>
-      <Notification message={errorMessage} />
       <form onSubmit={handleLogin}>
         <div>
           <label htmlFor="Username">Username</label>
@@ -12,6 +9,7 @@ const LoginForm = ({ errorMessage, handleLogin, username, setUsername, password,
             type="text"
             value={username}
             name="Username"
+            id="Username"
             onChange={({ target }) => setUsername(target.value)}
           />
         </div>
@@ -21,6 +19,7 @@ const LoginForm = ({ errorMessage, handleLogin, username, setUsername, password,
             type="password"
             value={password}
             name="Password"
+            id="Password"
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
