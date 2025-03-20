@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Blog from "./components/Blog";
-import Notification from "./components/Notification";
+import BlogForm from "./components/BlogForm";
+import LoginForm from "./components/LoginForm";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -10,6 +11,9 @@ const App = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const [user, setUser] = useState(null);
+  const [blogTitle, setBlogTitle] = useState("");
+  const [blogAuthor, setBlogAuthor] = useState("");
+  const [blogUrl, setBlogUrl] = useState("");
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -50,44 +54,59 @@ const App = () => {
     setUser(null);
   };
 
-  if (user === null) {
-    return (
-      <>
-        <h2>Log in to application</h2>
-        <Notification message={errorMessage} />
-        <form onSubmit={handleLogin}>
-          <div>
-            <label htmlFor="Username">Username</label>
-            <input
-              type="text"
-              value={username}
-              name="Username"
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </div>
-          <div>
-            <label htmlFor="Password">Password</label>
-            <input
-              type="password"
-              value={password}
-              name="Password"
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </div>
-          <button type="submit">login</button>
-        </form>
-      </>
-    );
-  }
+  const handleNewBlog = () => {
+    try {
+      const blog = {
+        title: blogTitle,
+        author: blogAuthor,
+        url: blogUrl,
+      };
+      blogService.create(blog);
+      setBlogTitle("");
+      setBlogAuthor("");
+      setBlogUrl("");
+    } catch (exception) {
+      setErrorMessage("Something went wrong with adding a new blog");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    }
+  };
 
   return (
     <div>
-      <h2>blogs</h2>
-      <div>
-        {user.username} logged in
-        <button onClick={handleLogout}>logout</button>
-      </div>
-      <br />
+      <h1>Blogs</h1>
+      {user === null ? (
+        <LoginForm
+          errorMessage={errorMessage}
+          handleLogin={handleLogin}
+          username={username}
+          setUsername={setUsername}
+          password={password}
+          setPassword={setPassword}
+        />
+      ) : (
+        <div>
+          <p>
+            {user.name} logged in <button onClick={handleLogout}>logout</button>
+          </p>
+        </div>
+      )}
+
+      {user !== null && (
+        <BlogForm
+          handleNewBlog={handleNewBlog}
+          blogTitle={blogTitle}
+          setBlogTitle={setBlogTitle}
+          blogAuthor={blogAuthor}
+          setBlogAuthor={setBlogAuthor}
+          blogUrl={blogUrl}
+          setBlogUrl={setBlogUrl}
+        />
+      )}
+
+      <h2>See all blogs</h2>
+
       {blogs.map((blog) => (
         <Blog
           key={blog.id}
