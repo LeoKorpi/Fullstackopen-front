@@ -1,16 +1,27 @@
-const BlogForm = ({
-  handleNewBlog,
-  blogTitle,
-  setBlogTitle,
-  blogAuthor,
-  setBlogAuthor,
-  blogUrl,
-  setBlogUrl,
-}) => {
+import { useState } from "react";
+
+const BlogForm = ({ createBlog }) => {
+  const [blogTitle, setBlogTitle] = useState("");
+  const [blogAuthor, setBlogAuthor] = useState("");
+  const [blogUrl, setBlogUrl] = useState("");
+
+  const addBlog = (event) => {
+    event.preventDefault();
+    createBlog({
+      title: blogTitle,
+      author: blogAuthor,
+      url: blogUrl,
+    });
+
+    setBlogTitle("");
+    setBlogAuthor("");
+    setBlogUrl("");
+  };
+
   return (
     <section>
       <h2>Create a new blog</h2>
-      <form onSubmit={handleNewBlog}>
+      <form onSubmit={addBlog}>
         <label htmlFor="blogtitle">
           Title:
           <input
@@ -18,7 +29,7 @@ const BlogForm = ({
             id="blogtitle"
             name="blogtitle"
             value={blogTitle}
-            onChange={({ target }) => setBlogTitle(target.value)}
+            onChange={(event) => setBlogTitle(event.target.value)}
           />
         </label>
         <br />
@@ -29,7 +40,7 @@ const BlogForm = ({
             id="blogauthor"
             name="blogauthor"
             value={blogAuthor}
-            onChange={({ target }) => setBlogAuthor(target.value)}
+            onChange={(event) => setBlogAuthor(event.target.value)}
           />
         </label>
         <br />
@@ -40,7 +51,7 @@ const BlogForm = ({
             id="blogurl"
             name="blogurl"
             value={blogUrl}
-            onChange={({ target }) => setBlogUrl(target.value)}
+            onChange={(event) => setBlogUrl(event.target.value)}
           />
         </label>
         <br />

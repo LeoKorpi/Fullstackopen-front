@@ -9,13 +9,8 @@ import loginService from "./services/login";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [notification, setNotification] = useState({ message: null, type: "" });
   const [user, setUser] = useState(null);
-  const [blogTitle, setBlogTitle] = useState("");
-  const [blogAuthor, setBlogAuthor] = useState("");
-  const [blogUrl, setBlogUrl] = useState("");
   const [loginVisible, setLoginVisible] = useState(false);
 
   useEffect(() => {
@@ -31,20 +26,15 @@ const App = () => {
     }
   }, []);
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
+  const handleLogin = async (userObject) => {
+    console.log("The whole userObject: ", userObject);
 
     try {
-      const user = await loginService.login({
-        username,
-        password,
-      });
+      const user = await loginService.login(userObject);
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
       blogService.setToken(user.token);
       setUser(user);
       showNotification("Successfully logged in!");
-      setUsername("");
-      setPassword("");
     } catch (exception) {
       showNotification("Wrong credentials", "error");
     }
@@ -56,18 +46,12 @@ const App = () => {
     setUser(null);
   };
 
-  const handleNewBlog = () => {
+  const addBlog = (blogObject) => {
     try {
-      const blog = {
-        title: blogTitle,
-        author: blogAuthor,
-        url: blogUrl,
-      };
-      showNotification(`The blog '${blog.title}' by ${blog.author} has been added!`);
-      blogService.create(blog);
-      setBlogTitle("");
-      setBlogAuthor("");
-      setBlogUrl("");
+      blogService.create(blogObject).then((returnedBlog) => {
+        setBlogs(blogs.concat(returnedBlog));
+      });
+      showNotification(`The blog '${blogObject.title}' by ${blogObject.author} has been added!`);
     } catch (exception) {
       showNotification("Something went wrong with adding a new blog", "error");
     }
@@ -90,13 +74,7 @@ const App = () => {
           <button onClick={() => setLoginVisible(true)}>Log in</button>
         </div>
         <div style={showWhenVisible}>
-          <LoginForm
-            username={username}
-            password={password}
-            setUsername={({ target }) => setUsername(target.value)}
-            setPassword={({ target }) => setPassword(target.value)}
-            handleLogin={handleLogin}
-          />
+          <LoginForm login={handleLogin} />
           <button onClick={() => setLoginVisible(false)}>Cancel</button>
         </div>
       </>
@@ -118,16 +96,7 @@ const App = () => {
             <button onClick={handleLogout}>Log out</button>
           </div>
           <Togglable buttonLabel="new blog">
-            <BlogForm
-              notification={notification}
-              handleNewBlog={handleNewBlog}
-              blogTitle={blogTitle}
-              setBlogTitle={setBlogTitle}
-              blogAuthor={blogAuthor}
-              setBlogAuthor={setBlogAuthor}
-              blogUrl={blogUrl}
-              setBlogUrl={setBlogUrl}
-            />
+            <BlogForm createBlog={addBlog} />
           </Togglable>
         </div>
       )}
