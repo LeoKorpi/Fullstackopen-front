@@ -8,7 +8,7 @@ const BlogForm = ({
   setBlogUrl,
 }) => {
   return (
-    <>
+    <section>
       <h2>Create a new blog</h2>
       <form onSubmit={handleNewBlog}>
         <label htmlFor="blogtitle">
@@ -46,7 +46,7 @@ const BlogForm = ({
         <br />
         <button type="submit">Create</button>
       </form>
-    </>
+    </section>
   );
 };
 
